@@ -56,8 +56,12 @@ def copy_raw(dir, title):
         if not new_dir:
             new_dir = make_dir(d, suff, title)
 
-        print "copy %s %s/%s" % (path_name, new_dir, new_fname)
-        copyfile(path_name, new_dir+'/'+new_fname)
+        new_file = new_dir+'/'+new_fname
+        if os.path.exists(new_file):
+            print "error: file %s already exist" % new_file
+        else:
+            print "copy %s %s" % (path_name, new_file)
+            copyfile(path_name, new_file)
 
 def get_title():
     if len(sys.argv) > 1:
