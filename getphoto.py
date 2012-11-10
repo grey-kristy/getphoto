@@ -38,7 +38,7 @@ def make_dir(d, suff, title):
         os.makedirs(dir)
     return dir
 
-def copy_raw(dir, title):
+def copy_raw(dir, title, old_date=None):
     MONTHS = ('','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
     new_dir = None
     for fname in os.listdir(dir):
@@ -53,8 +53,14 @@ def copy_raw(dir, title):
         new_fname = '%04d%s%02d_%02d%02d%02d.%s' % (
             d.year, MONTHS[d.month], d.day, d.hour, d.minute, d.second, suff
             )
+
         if not new_dir:
-            new_dir = make_dir(d, suff, title)
+            if old_date:
+                dir_date = old_date
+            else:
+                dir_date = date
+            dd = datetime.strptime(str(dir_date), '%Y:%m:%d %H:%M:%S')            
+            new_dir = make_dir(dd, suff, title)
 
         new_file = new_dir+'/'+new_fname
         if os.path.exists(new_file):
@@ -62,6 +68,8 @@ def copy_raw(dir, title):
         else:
             print "copy %s %s" % (path_name, new_file)
             copyfile(path_name, new_file)
+            pass
+    return dir_date
 
 def get_title():
     if len(sys.argv) > 1:
@@ -72,7 +80,9 @@ def get_title():
 
 def main():
     title = get_title()
+    old_date = None
     for dir in get_dcim_dirs():
-        copy_raw(dir, title)    
-    
+        new_date = copy_raw(dir, title, old_date)    
+        old_date = new_date    
+
 main()
