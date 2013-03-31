@@ -25,8 +25,13 @@ def get_exif_date(fname):
 def get_dcim_dirs():
     for dir in os.listdir(MOUNT_DIR):
         for subdir in os.listdir(MOUNT_DIR+'/'+dir):
+            if not os.path.isdir(os.path.join(MOUNT_DIR,dir,subdir)):
+                continue
             if subdir == 'DCIM':
                 break
+        else:
+            continue
+        break
     path = '%s/%s/%s' % (MOUNT_DIR, dir, subdir)
     return ['%s/%s' % (path, dir) for dir in os.listdir(path) if dir != 'MISC']
 
@@ -41,6 +46,7 @@ def make_dir(d, suff, title):
 def copy_raw(dir, title, old_date=None):
     MONTHS = ('','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
     new_dir = None
+    dir_date = None
     for fname in os.listdir(dir):
         path_name = '%s/%s' % (dir, fname) 
         try: 
